@@ -6,8 +6,8 @@ two things upstream doesn't have:
 
 1. **A separate denoise value for every cycle pass** — instead of one `denoise` for all
    `cycle` iterations, you set `denoise_pass_1` … `denoise_pass_10` individually.
-2. **Optional colour matching** — the regenerated face is matched back to the original crop
-   before it is pasted, removing the brightness/colour "seam" that appears at high denoise.
+2. **Optional color matching** — the regenerated face is matched back to the original crop
+   before it is pasted, removing the brightness/color "seam" that appears at high denoise.
 
 Everything else — detection, crop, feathering, SAM refinement, the `detailer_hook` input, the
 `DETAILER_PIPE` output — behaves exactly like the stock `FaceDetailer` node.
@@ -32,7 +32,7 @@ Splitting the value per pass lets you do things like:
 | Progressive refinement | `0.50` | `0.35`, `0.20` |
 
 Cycle passes are **cumulative**: pass 2 starts from the latent that pass 1 produced, not from the
-original. This is upstream Impact Pack behaviour and is unchanged here.
+original. This is upstream Impact Pack behavior and is unchanged here.
 
 ---
 
@@ -89,7 +89,7 @@ All inputs are identical to the stock `FaceDetailer`, **except**:
 | Input | Type | Default | Notes |
 |---|---|---|---|
 | `denoise_pass_1` … `denoise_pass_10` | FLOAT | `0.5` | Denoise for cycle pass 1–10. Absolute values, not deltas. Min `0.0001`, max `1.0`. |
-| `color_match_enabled` | BOOLEAN | `true` | Master switch for colour matching. |
+| `color_match_enabled` | BOOLEAN | `true` | Master switch for color matching. |
 | `color_match_mode` | COMBO | `mean_std` | See modes below. |
 | `color_match_strength` | FLOAT | `1.0` | `0.0` = no correction, `1.0` = full correction. |
 
@@ -104,11 +104,11 @@ Unchanged from stock `FaceDetailer`:
 
 ---
 
-## Colour matching
+## Color matching
 
 Regenerated faces often come back slightly brighter, warmer, or flatter than the surrounding
-scene, which leaves a visible rectangle where the crop was pasted back. Colour matching takes the
-upscaled **source** crop as a reference, re-maps the regenerated crop to match its colour
+scene, which leaves a visible rectangle where the crop was pasted back. Color matching takes the
+upscaled **source** crop as a reference, re-maps the regenerated crop to match its color
 statistics, and only then pastes it.
 
 The reference is captured once, before sampling; the correction is applied once, after the final
@@ -118,10 +118,10 @@ cycle. Intermediate passes are never touched.
 
 | Mode | What it matches | Use when |
 |---|---|---|
-| `mean_std` | Per-channel RGB mean and standard deviation (Reinhard). | **Default.** Fixes brightness, contrast and colour cast. Fast. Can shift hue slightly. |
-| `mean_std_luma` | Luminance mean and standard deviation only, applied equally to R/G/B. | Fixes brightness and contrast while **preserving** the generated hue and saturation. Good for already-correct colour. |
+| `mean_std` | Per-channel RGB mean and standard deviation (Reinhard). | **Default.** Fixes brightness, contrast and color cast. Fast. Can shift hue slightly. |
+| `mean_std_luma` | Luminance mean and standard deviation only, applied equally to R/G/B. | Fixes brightness and contrast while **preserving** the generated hue and saturation. Good for already-correct color. |
 | `histogram` | Per-channel full distribution (CDF match). | Strongest tonal match. Can flatten regenerated texture and shift hue. Slowest — involves a per-channel sort. |
-| `lab_reinhard` | Mean and standard deviation of L, a, b in CIE Lab. | Perceptually better brightness + colour match than RGB. Good general-purpose step up from `mean_std`. |
+| `lab_reinhard` | Mean and standard deviation of L, a, b in CIE Lab. | Perceptually better brightness + color match than RGB. Good general-purpose step up from `mean_std`. |
 | `lab_hist_luma_chroma_meanstd` | Histogram match of L, mean/std match of a and b. | Strongest mode that still preserves hue. Try this if others leave a visible seam. |
 
 Modes marked Lab require 3-channel RGB input. Anything else (grayscale, RGBA) silently falls back
@@ -147,7 +147,7 @@ modes are near-free.
 If you connect a `detailer_hook`, the chain is applied in this order:
 
 ```
-your hook  →  per-cycle denoise  →  colour match
+your hook  →  per-cycle denoise  →  color match
 ```
 
 Because hooks are combined in sequence, **this node's `denoise_pass_*` values override any
@@ -155,7 +155,7 @@ upstream hook that also sets denoise**, such as `DetailerDenoiseSchedulerHook`,
 `SimpleDenoiseScheduleHook`, or `SimpleDetailerDenoiseSchedulerHook`. Combining them is not an
 error, but the schedule from the other hook will have no effect.
 
-Your hook's other behaviour (custom sampler, noise, SEGS filtering, `post_paste`) is unaffected.
+Your hook's other behavior (custom sampler, noise, SEGS filtering, `post_paste`) is unaffected.
 
 ---
 
@@ -169,7 +169,7 @@ Two small `DetailerHook` subclasses, chained with `hooks.DetailerHookCombine`:
 - `ColorMatchHook.post_upscale` — clones the upscaled source crop as the reference.
   `ColorMatchHook.post_decode` — resizes the reference if needed and re-maps the decoded result.
 
-Colour maths is implemented in plain torch: Reinhard transfer, inverse-CDF histogram matching, and
+Color maths is implemented in plain torch: Reinhard transfer, inverse-CDF histogram matching, and
 sRGB ↔ CIE Lab conversion with a D65 white point.
 
 ---
@@ -190,7 +190,7 @@ than editing the installed pack.
 
 - **Not for video.** Same as upstream `FaceDetailer` — a warning is logged and each frame is
   processed independently, ignoring temporal consistency. Use `Detailer For AnimateDiff`.
-- Colour matching uses **global per-crop statistics**. It cannot fix a face whose interior lighting
+- Color matching uses **global per-crop statistics**. It cannot fix a face whose interior lighting
   legitimately differs from the surrounding scene; lower the strength instead.
 - Matching applies to the whole crop, not a masked region.
 - `histogram` modes assume the crop's tonal distribution should equal the source crop's. If the
@@ -206,4 +206,4 @@ combined work is GPL-3.0. See [LICENSE](LICENSE).
 
 - [ComfyUI Impact Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack) by ltdrdata — the
   `FaceDetailer` implementation and hook API this node builds on.
-- Colour transfer based on Reinhard et al., *Color Transfer between Images* (2001).
+- Color transfer based on Reinhard et al., *Color Transfer between Images* (2001).
