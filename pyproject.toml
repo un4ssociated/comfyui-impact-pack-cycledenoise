@@ -1,0 +1,20 @@
+[project]
+name = "impact-pack-cycledenoise"
+version = "1.0.0"
+description = "FaceDetailer variant for ComfyUI Impact Pack with a separate denoise value per cycle pass and optional color matching."
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["comfyui", "impact-pack", "facedetailer", "detailer", "comfyui-custom-node"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Repository = "https://github.com/un4ssociated/comfyui-impact-pack-cycledenoise"
+"Bug Tracker" = "https://github.com/un4ssociated/comfyui-impact-pack-cycledenoise/issues"
+
+[tool.comfy]
+PublisherId = "un4ssociated"
+DisplayName = "Impact Pack - FaceDetailer Cycle Denoise"
