@@ -52,9 +52,25 @@ It is a companion to Impact Pack, not a replacement — Impact Pack must be inst
 
 ## Install
 
+**ComfyUI Impact Pack is required.** Install it first if you don't have it, either through
+ComfyUI Manager or with `comfy node install comfyui-impact-pack`.
+
+### ComfyUI Manager
+
+Search for **Impact Pack - FaceDetailer Cycle Denoise** in *Manager → Custom Nodes Manager*,
+install, then restart ComfyUI.
+
+### comfy-cli
+
+```bash
+comfy node install impact-pack-cycledenoise
+```
+
+### Manual
+
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/<you>/comfyui-impact-pack-cycledenoise.git
+git clone https://github.com/un4ssociated/comfyui-impact-pack-cycledenoise.git
 ```
 
 Restart ComfyUI **completely** (not just a queue refresh), then look for
@@ -67,6 +83,12 @@ If the folder is missing entirely from the node list, check the ComfyUI console 
 ```
 
 That means Impact Pack is not installed, not loading, or sits outside `custom_nodes`.
+
+## Update
+
+Manager and `comfy-cli` pick up new versions from the
+[Comfy Registry](https://registry.comfy.org). A manual install updates with `git pull` in the
+node folder, followed by a ComfyUI restart.
 
 ## Uninstall
 
